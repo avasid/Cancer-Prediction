@@ -179,7 +179,7 @@ for label in ['Distant', 'Locoregional', 'Death']:
     for n in range(nBoot):
         dataBoot = X_train_text.iloc[sorted(list(trainS[:, n]))]
         outcomeBoot = y_train[sorted(list(trainS[:, n]))]
-        matcorr[:, n] = dataBoot.corrwith(outcomeBoot, axis=0, method='spearman')
+        matcorr[:, n] = abs(dataBoot.corrwith(outcomeBoot, axis=0, method='spearman'))
         print("Correlation Matrix, bootstrapping sample " + str(n))
 
     tin = pd.DataFrame(matcorr)
