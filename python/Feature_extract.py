@@ -371,4 +371,4 @@ for label in ['Distant', 'Locoregional', 'Death']:
 
     fname = "./" + label
     with open(fname, 'wb+') as fh:
-        pickle.dump([X_train_text, X_test, y_train, y_test, red_feat, modelMat, metricMat], fh, protocol=2)
+        pickle.dump([X_train, X_test, y_train, y_test, red_feat, modelMat, metricMat], fh, protocol=2)
