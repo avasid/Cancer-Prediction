@@ -7,7 +7,7 @@ The package is mainly divided into 2 parts based on the environment the followin
 
 The project is compatible with Python2.7.x and Matlab R2018b
 
-To install the required libraries of python, run ```pip install -r requirement.txt```.
+To install the required libraries of python, run ```pip install -r requirement.txt``` from the ```python``` directory.
 
 
 ### Steps
