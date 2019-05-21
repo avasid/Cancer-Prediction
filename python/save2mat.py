@@ -1,16 +1,12 @@
-import os
-from dicom_contour.contour import *
-import pydicom
-import numpy as np
-from scipy.io import savemat
 import pandas as pd
-
+import pydicom
+from dicom_contour.contour import *
+from scipy.io import savemat
 
 PATH = "/home/aakif/HeadNeck/CT"
 
 
 def coord(contour_dataset, path):
-
     contour_coord = contour_dataset.ContourData
     # x, y, z coordinates of the contour in mm
     coord = []
@@ -52,9 +48,7 @@ def coord(contour_dataset, path):
     return img_arr, contour_arr, img_ID
 
 
-
 def cfile2pixels(file, path, ROIContourSeq=0):
-
     # handle `/` missing
     if path[-1] != '/': path += '/'
     f = dicom.read_file(path + file)
@@ -65,8 +59,8 @@ def cfile2pixels(file, path, ROIContourSeq=0):
     img_contour_arrays = [coord(cdata, path) for cdata in contours]
     return img_contour_arrays
 
-def get_data(path, index):
 
+def get_data(path, index):
     images = []
     contours = []
     # handle `/` missing
@@ -78,7 +72,7 @@ def get_data(path, index):
     # get contour dict
     contour_dict = get_contour_dict(contour_file, path, index)
 
-    for k,v in ordered_slices:
+    for k, v in ordered_slices:
         # get data from contour dict
         if k in contour_dict:
             images.append(contour_dict[k][0])
@@ -95,14 +89,13 @@ def get_data(path, index):
 
 
 def create_image_mask_files(path, index):
-
     # Extract Arrays from DICOM
     X, Y = get_data(path, index)
     Y = np.array([fill_contour(y) if y.max() == 1 else y for y in Y])
     return X, Y
 
-def get_contour_dict(contour_file, path, index):
 
+def get_contour_dict(contour_file, path, index):
     # handle `/` missing
     if path[-1] != '/': path += '/'
     # img_arr, contour_arr, img_fname
@@ -129,12 +122,12 @@ hmr = list(xls_hmr.Patient)
 
 patients = os.listdir(PATH)
 npatients = str(len(patients))
-i=0
+i = 0
 for patient in patients:
-    i+=1
-    print("Converting " + patient + " : " + str(i)+"/" + npatients)
+    i += 1
+    print("Converting " + patient + " : " + str(i) + "/" + npatients)
 
-    contour_path = os.path.join(os.path.join(PATH,patient),"RTstructCT")
+    contour_path = os.path.join(os.path.join(PATH, patient), "RTstructCT")
     contour_file_mine = pydicom.read_file(contour_path)
 
     if patient in chum:
@@ -172,7 +165,7 @@ for patient in patients:
         print("ERROR in contour")
         break
 
-    files_path = os.path.join(PATH,patient)
+    files_path = os.path.join(PATH, patient)
     files = os.listdir(files_path)
 
     id_to_name = {}
@@ -181,7 +174,7 @@ for patient in patients:
         dcm_file = pydicom.read_file(file_path)
         id_to_name[dcm_file.SOPInstanceUID] = file
 
-    slice_pixel_path = os.path.join(files_path,"000002.dcm")
+    slice_pixel_path = os.path.join(files_path, "000002.dcm")
     slice_pixel = pydicom.read_file(slice_pixel_path)
     sliceS = slice_pixel.SliceThickness
     pixelW = slice_pixel.PixelSpacing[0]
@@ -200,5 +193,6 @@ for patient in patients:
     new_mask = new_mask.astype('float')
     # new_mask[new_mask == 0] = np.nan
     # roi = np.multiply(new_img_data, new_mask)
-    savemat("/media/aakif/Common/MATLAB_files_both/" + patient + '.mat', mdict={'ROIbox': new_img_data,'mask':new_mask,
-                                                                           'pixelW': pixelW, 'sliceS': sliceS})
+    savemat("/media/aakif/Common/MATLAB_files_both/" + patient + '.mat',
+            mdict={'ROIbox': new_img_data, 'mask': new_mask,
+                   'pixelW': pixelW, 'sliceS': sliceS})
